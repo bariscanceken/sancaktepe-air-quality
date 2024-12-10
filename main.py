@@ -2,11 +2,12 @@
 import requests
 import pandas as pd
 import tkinter
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
+from matplotlib.pyplot import figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from tabulate import tabulate
 
-
-#pull
+#pull"
 url = "https://api.waqi.info/feed/sancaktepe/?token=2fad932ee24a2508b6e6c75d858a680e46b746f5"
 response = requests.get(url).json()
 
@@ -157,22 +158,35 @@ trydataframe = pd.DataFrame(veriable_values , index = veriable_names , columns=[
 trydataframe = trydataframe.rename_axis("Veriable")
 trydataframe["Level"] = veriable_values_level
 
+
+
 #Matplotlib
 fig, ax = plt.subplots()
-ax.plot(veriable_names_short , veriable_values_measurable)
-plt.show()
+ax.bar(veriable_names_short , veriable_values_measurable)
+plt.xlabel("VARIABLES")
+plt.ylabel("DANGER LEVEL")
+fig.set_figwidth(4)
+fig.set_figheight(4)
+
+#Tabulate 
+
+xtext = tabulate(trydataframe,headers="keys",tablefmt="simple")
 
 #Tkinter
 window = tkinter.Tk()
+
 window.title("Air Quality For Sancaktepe")
-text_welcome = tkinter.Label(text="Sancaktepe Air Quality")
-text_welcome.pack()
-text_data = tkinter.Label(text=trydataframe)
-text_data.pack()
+text_white = tkinter.Label(text=" ",background="White",height=1000,width=1000)
+text_white.place(x=0,y=0)
+text_welcome = tkinter.Label(text="Sancaktepe Air Quality",font="Arial 28",background="White")
+text_welcome.place(x=0,y=20)
+text_data = tkinter.Text(window, wrap=tkinter.WORD,height=15,)
+text_data.pack(expand=True, fill="both")
+text_data.insert(tkinter.END, xtext)
+text_data.config(state=tkinter.DISABLED)
+text_data.place(x=0,y=100)
 text_graphic = tkinter.Label
 canvas = FigureCanvasTkAgg(fig,master=window)
-canvas.get_tk_widget().pack()
-
-
+canvas.get_tk_widget().place(x=500,y=-60)
 
 window.mainloop()
